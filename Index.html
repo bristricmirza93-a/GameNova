@@ -8,29 +8,66 @@
 
 <body>
 
-<header>
-🎮 Gaming Nova
+<!-- HEADER -->
+<header class="header">
+<img src="logo.png" class="logoimg">
+<span>Gaming Nova</span>
 </header>
 
-<div style="padding:15px">
-
-<input id="search" placeholder="Search news..."
-style="width:100%;padding:12px;border-radius:10px;border:none;background:#111;color:white;margin-bottom:15px"
-onkeyup="searchNews()">
-
-<div style="display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap">
-<button onclick="filterCat('All')">All</button>
-<button onclick="filterCat('Mobile')">Mobile</button>
-<button onclick="filterCat('PC')">PC</button>
-<button onclick="filterCat('Esports')">Esports</button>
+<!-- BREAKING -->
+<div class="breaking">
+🔥 Latest gaming news, leaks and updates daily
 </div>
 
+<!-- MENU -->
+<div class="topmenu">
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
 </div>
 
-<div class="container">
-<h2>Latest News</h2>
+<!-- FEATURED -->
+<div class="featured">
+<img src="https://wallpapercave.com/wp/wp5128415.jpg">
+<div class="featured-text">
+<h2>Gaming Nova - Gaming News & Leaks</h2>
+<p>Stay updated with latest gaming updates</p>
+</div>
+</div>
+
+<div class="main">
+
+<!-- LEFT -->
+<div class="left">
+
+<h2>📰 Latest News</h2>
 <div id="news"></div>
+
+<h2 style="margin-top:40px">⚡ Latest Leaks</h2>
+<div id="leaks"></div>
+
 </div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="right">
+
+<h3>🔥 Trending</h3>
+<div class="trend">GTA 6</div>
+<div class="trend">Warzone</div>
+<div class="trend">PlayStation</div>
+<div class="trend">Valorant</div>
+
+<h3 style="margin-top:30px">👑 Popular</h3>
+<div class="trend">Most viewed news</div>
+<div class="trend">Top leaks today</div>
+
+</div>
+
+</div>
+
+<footer>
+Gaming Nova © 2026
+</footer>
 
 <script src="script.js"></script>
 </body>

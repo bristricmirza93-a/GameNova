@@ -241,3 +241,31 @@
 
 </body>
 </html>
+<script>
+
+function generateAI(){
+
+let topics = [
+"GTA 6 new leak",
+"Warzone update",
+"PlayStation 6",
+"Fortnite season",
+"Steam new record",
+"Valorant Mobile",
+"EA FC update",
+"Xbox news"
+];
+
+let random = topics[Math.floor(Math.random()*topics.length)];
+
+let text = random + " is currently trending in the gaming community. \
+New information has appeared online and players are excited about what is coming next. \
+More updates are expected very soon as developers prepare announcements.";
+
+document.querySelector('input[name="title"]').value = random;
+document.querySelector('textarea[name="text"]').value = text;
+
+alert("AI generated news ready 🚀");
+}
+
+</script>

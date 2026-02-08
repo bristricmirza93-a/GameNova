@@ -1,3 +1,5 @@
+<body style="background:red">
+<h1>TESTTT</h1>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,48 +8,162 @@
 
 <style>
 body{
-background:black;
+background:#050505;
 color:white;
 font-family:Arial;
-padding:20px;
+margin:0;
+padding:0;
 }
 
-h1{
-font-size:26px;
-margin-bottom:15px;
-}
-
-img{
-width:100%;
-border-radius:12px;
-margin-bottom:15px;
-}
-
-.category{
+/* HEADER */
+.header{
+display:flex;
+align-items:center;
+gap:10px;
+background:#0b0b0b;
+padding:16px;
+font-size:22px;
+font-weight:900;
 color:#00ff88;
-font-weight:bold;
+border-bottom:2px solid #00ff88;
+}
+
+/* CONTAINER */
+.container{
+padding:20px;
+max-width:900px;
+margin:auto;
+}
+
+/* IMAGE */
+.cover{
+width:100%;
+max-height:320px;
+object-fit:cover;
+border-radius:14px;
+margin:15px 0;
+}
+
+/* TITLE */
+h1{
+font-size:28px;
+margin-bottom:10px;
+}
+
+/* CATEGORY */
+.cat{
+color:#00ff88;
+margin-bottom:10px;
+}
+
+/* VIEWS */
+.views{
+color:#aaa;
+margin-bottom:20px;
+}
+
+/* TEXT */
+.text{
+font-size:17px;
+line-height:1.6;
+margin-bottom:40px;
+}
+
+/* COMMENTS */
+.comment-box{
+margin-top:40px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
 margin-top:10px;
+border-radius:10px;
+border:none;
+background:#111;
+color:white;
+}
+
+button{
+margin-top:10px;
+padding:12px;
+background:#00ff88;
+border:none;
+border-radius:10px;
+font-weight:bold;
+}
+
+.comment{
+background:#111;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="header">🎮 Gaming Nova</div>
+
+<div class="container">
+
 <h1 id="title"></h1>
-<img id="image">
-<div class="category" id="category"></div>
-<p id="text"></p>
+<div class="cat" id="category"></div>
+<div class="views" id="views"></div>
+
+<img id="image" class="cover">
+
+<div class="text" id="text"></div>
+
+<!-- COMMENTS -->
+<div class="comment-box">
+<h2>💬 Comments</h2>
+
+<input id="name" placeholder="Your name">
+<textarea id="comment" placeholder="Write comment..."></textarea>
+<button onclick="postComment()">Post Comment</button>
+
+<div id="comments"></div>
+</div>
+
+</div>
 
 <script>
 let article = JSON.parse(localStorage.getItem("openArticle"));
 
-if(article){
-document.getElementById("title").innerText = article.title || "";
-document.getElementById("image").src = article.image || "";
-document.getElementById("category").innerText = article.category || "";
+document.getElementById("title").innerText = article.title;
+document.getElementById("category").innerText = article.category || "Gaming";
+document.getElementById("views").innerText = "👁 " + (article.views||0) + " views";
+document.getElementById("image").src = article.image;
 document.getElementById("text").innerText = article.text || "";
-}else{
-document.body.innerHTML="<h2>No article found</h2>";
+
+// COMMENTS
+let commentsKey = "comments_"+article.title;
+let comments = JSON.parse(localStorage.getItem(commentsKey) || "[]");
+
+function renderComments(){
+let box=document.getElementById("comments");
+box.innerHTML="";
+comments.forEach(c=>{
+box.innerHTML += `<div class="comment"><b>${c.name}</b><br>${c.text}</div>`;
+});
+}
+renderComments();
+
+function postComment(){
+let name=document.getElementById("name").value;
+let text=document.getElementById("comment").value;
+
+if(!name || !text){alert("Write comment");return;}
+
+comments.push({name,text});
+localStorage.setItem(commentsKey,JSON.stringify(comments));
+
+document.getElementById("name").value="";
+document.getElementById("comment").value="";
+
+renderComments();
 }
 </script>
 
