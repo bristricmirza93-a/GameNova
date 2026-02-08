@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GamingNova Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>🎮 GamingZone Admin Panel</h1>
+
+  <!-- FORM -->
+  <input id="title" placeholder="News title"
+    style="width:100%;padding:14px;border-radius:10px;border:none;margin-bottom:10px">
+
+  <select id="category"
+    style="width:100%;padding:14px;border-radius:10px;border:none;margin-bottom:10px">
+    <option value="PC">PC</option>
+    <option value="Mobile">Mobile</option>
+    <option value="PlayStation">PlayStation</option>
+    <option value="Xbox">Xbox</option>
+    <option value="Esports">Esports</option>
+  </select>
+
+  <input type="file" id="imageUpload" accept="image/*" style="margin-bottom:10px">
+
+  <div id="previewWrap" style="display:none;margin-bottom:10px">
+    <img id="previewImg" style="width:100%;border-radius:12px">
+  </div>
+
+  <textarea id="text" placeholder="Write full news..."
+    style="width:100%;height:160px;padding:14px;border-radius:10px;border:none"></textarea>
+
+  <button id="submitBtn" onclick="postOrUpdateNews()" style="width:100%;margin-top:15px">
+    POST NEWS 🚀
+  </button>
+
+  <button onclick="resetForm()" style="width:100%;margin-top:10px;background:#222;color:#fff">
+    CLEAR FORM
+  </button>
+
+  <hr style="margin:25px 0;border:1px solid #1f1f1f">
+
+  <h2 style="margin-bottom:10px">🗂 Manage Posts</h2>
+  <div id="posts"></div>
+</div>
+
+<script>
+  // state
+  let uploadedImage = "";
+  let editingId = null; // when not null -> edit mode
+
+  // load posts
+  function getAll() {
+    return JSON.parse(localStorage.getItem("news") || "[]");
+  }
+  function setAll(arr) {
+    localStorage.setItem("news", JSON.stringify(arr));
+  }
+
+  // image upload
+  document.getElementById("imageUpload").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      uploadedImage = e.target.result;
+
+      // preview
+      document.getElementById("previewWrap").style.display = "block";
+      document.getElementById("previewImg").src = uploadedImage;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // create id
+  function uid() {
+    return Date.now() + "_" + Math.floor(Math.random() * 100000);
+  }
+
+  // post or update
+  function postOrUpdateNews() {
+    const title = document.getElementById("title").value.trim();
+    const text = document.getElementById("text").value.trim();
+    const category = document.getElementById("category").value;
+
+    if (!title || !text) {
+      alert("Add title and text!");
+      return;
+    }
+
+    let all = getAll();
+
+    // EDIT MODE
+    if (editingId) {
+      const idx = all.findIndex(x => x.id === editingId);
+      if (idx === -1) {
+        alert("Post not found.");
+        resetForm();
+        return;
+      }
+
+      // if user didn't pick new image, keep old one
+      const existingImage = all[idx].image;
+      const finalImage = uploadedImage ? uploadedImage : existingImage;
+
+      all[idx] = {
+        ...all[idx],
+        title,
+        text,
+        category,
+        image: finalImage,
+        time: "Updated just now"
+      };
+
+      setAll(all);
+      alert("UPDATED ✅");
+      resetForm();
+      renderPosts();
+      return;
+    }
+
+    // CREATE MODE (requires image)
+    if (!uploadedImage) {
+      alert("Add an image (upload from device)!");
+      return;
+    }
+
+    const post = {
+      id: uid(),
+      title,
+      text,
+      category,
+      image: uploadedImage,
+      time: "Just now"
+    };
+
+    all.unshift(post);
+    setAll(all);
+
+    alert("POSTED 🔥");
+    resetForm();
+    renderPosts();
+  }
+
+  // edit
+  function editPost(id) {
+    const all = getAll();
+    const post = all.find(x => x.id === id);
+    if (!post) return alert("Post not found.");
+
+    editingId = id;
+    uploadedImage = ""; // reset upload; keep old unless new chosen
+
+    document.getElementById("title").value = post.title;
+    document.getElementById("text").value = post.text;
+    document.getElementById("category").value = post.category;
+
+    // show old image as preview
+    document.getElementById("previewWrap").style.display = "block";
+    document.getElementById("previewImg").src = post.image;
+
+    document.getElementById("submitBtn").innerText = "UPDATE POST ✅";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // delete
+  function deletePost(id) {
+    const ok = confirm("Delete this post?");
+    if (!ok) return;
+
+    const all = getAll().filter(x => x.id !== id);
+    setAll(all);
+
+    // if deleting currently edited post
+    if (editingId === id) resetForm();
+
+    renderPosts();
+  }
+
+  // reset form
+  function resetForm() {
+    editingId = null;
+    uploadedImage = "";
+
+    document.getElementById("title").value = "";
+    document.getElementById("text").value = "";
+    document.getElementById("category").value = "PC";
+    document.getElementById("imageUpload").value = "";
+
+    document.getElementById("previewWrap").style.display = "none";
+    document.getElementById("previewImg").src = "";
+
+    document.getElementById("submitBtn").innerText = "POST NEWS 🚀";
+  }
+
+  // render list
+  function renderPosts() {
+    const wrap = document.getElementById("posts");
+    const all = getAll();
+
+    if (!all.length) {
+      wrap.innerHTML = `<div style="color:#aaa">No posts yet.</div>`;
+      return;
+    }
+
+    wrap.innerHTML = all.map(p => `
+      <div style="background:#111;border-radius:14px;padding:12px;margin-bottom:12px">
+        <div style="display:flex;gap:10px;align-items:center">
+          <img src="${p.image}" style="width:70px;height:70px;object-fit:cover;border-radius:10px">
+          <div style="flex:1">
+            <div style="font-weight:900">${escapeHtml(p.title)}</div>
+            <div style="color:#00ff88;font-weight:bold;font-size:12px;margin-top:4px">${p.category}</div>
+            <div style="color:#777;font-size:12px;margin-top:4px">${escapeHtml(p.time || "")}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button onclick="editPost('${p.id}')" style="flex:1">EDIT</button>
+          <button onclick="deletePost('${p.id}')" style="flex:1;background:#ff3b3b;color:#000">DELETE</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // simple escape for titles/time
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // init
+  renderPosts();
+</script>
+
+</body>
+</html>

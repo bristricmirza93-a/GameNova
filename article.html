@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gaming Nova</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+background:black;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+h1{
+font-size:26px;
+margin-bottom:15px;
+}
+
+img{
+width:100%;
+border-radius:12px;
+margin-bottom:15px;
+}
+
+.category{
+color:#00ff88;
+font-weight:bold;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="title"></h1>
+<img id="image">
+<div class="category" id="category"></div>
+<p id="text"></p>
+
+<script>
+let article = JSON.parse(localStorage.getItem("openArticle"));
+
+if(article){
+document.getElementById("title").innerText = article.title || "";
+document.getElementById("image").src = article.image || "";
+document.getElementById("category").innerText = article.category || "";
+document.getElementById("text").innerText = article.text || "";
+}else{
+document.body.innerHTML="<h2>No article found</h2>";
+}
+</script>
+
+</body>
+</html>
